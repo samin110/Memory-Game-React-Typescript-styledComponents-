@@ -6,15 +6,14 @@ export const CardSection = styled.div`
 `;
 
 const CardAnimation = keyframes`
-0%{opacity:0};
-80%{opacity:0.8};
+0%{opacity:0;transform:scale(0.1)};
 100%{opacity:1}
 `;
 
 export const CardsWrapper = styled.div`
-  animation: ${CardAnimation} 2s linear;
+  animation: ${CardAnimation} 1.2s linear;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   grid-template-rows: repeat(3, 1fr);
   align-items: center;
   padding: 0 1rem;

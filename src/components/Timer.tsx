@@ -1,12 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
+import { CardsWrapper } from "../styled-components/CardSection";
 import { H1, InfoElement } from "../styled-components/GameInfoSection";
 
-const Timer = () => {
-  const [seconds, setSeconds] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [stop, setStop] = useState(false);
+import { CardsType } from "../App";
+import { timeFormat } from "../utils/timeFormat";
 
+type TimerProps = {
+  cards?: CardsType[];
+  seconds: number;
+  setSeconds: React.Dispatch<React.SetStateAction<number>>;
+  minutes: number;
+  setMinutes: React.Dispatch<React.SetStateAction<number>>;
+};
+
+const Timer = ({ cards, seconds, setSeconds, minutes, setMinutes }: TimerProps) => {
   useEffect(() => {
+    // Checks for is the game over ?
+    if (cards?.every((card) => card.matched)) {
+      return;
+    }
+    // Create Timer
     const interval = window.setInterval(() => {
       setSeconds(seconds + 1);
       if (seconds >= 59) {
@@ -19,8 +32,8 @@ const Timer = () => {
   }, [seconds]);
 
   return (
-    <InfoElement onClick={() => setStop(true)}>
-      <H1>Time = </H1> {(minutes < 10 && "0" + minutes) || minutes} : {(seconds < 10 && "0" + seconds) || seconds}
+    <InfoElement>
+      <H1>Time = </H1> {timeFormat(seconds, minutes)} {/*This function is : Create this format for time ==>  00:00 */}
     </InfoElement>
   );
 };

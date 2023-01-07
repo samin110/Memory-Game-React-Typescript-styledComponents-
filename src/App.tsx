@@ -1,15 +1,15 @@
-import "./App.css";
 import React, { useState, useEffect, useRef } from "react";
 import CardList from "./components/CardList";
 import Timer from "./components/Timer";
 import { cardListData } from "./data/cardListData";
+import sound from "./assets/audio/success.mp3";
 
 import { AppContainer } from "./styled-components/AppContainer";
 import { CardSection, CardsWrapper } from "./styled-components/CardSection";
 import { GameInfoSection, InfoElement, NewGameBtn, H1 } from "./styled-components/GameInfoSection";
-import { ToastContainer, toast } from "react-toastify";
+import GameModal from "./components/Modal";
 
-type CardsType = {
+export type CardsType = {
   name: string;
   id: number;
   matched: boolean;
@@ -22,6 +22,10 @@ function App() {
   const [disabled, setDisabled] = useState(false);
   const [startGame, setStartGame] = useState(false);
   const [score, setScore] = useState(0);
+
+  // This States is for Timer
+  const [seconds, setSeconds] = useState(0);
+  const [minutes, setMinutes] = useState(0);
 
   useEffect(() => {
     shuffleCards();
@@ -52,6 +56,10 @@ function App() {
     }
   }, [firstClick, secondClick]);
 
+  const playAudio = () => {
+    return new Audio(sound).play();
+  };
+
   const shuffleCards = () => {
     const cardCrossX2 = [...cardListData, ...cardListData];
     const addIDToCards: CardsType[] = cardCrossX2.map((item) => ({
@@ -75,15 +83,16 @@ function App() {
     setDisabled(false);
   };
 
+  function modal() {
+    if (cards.length > 0 && cards.every((card) => card.matched === true)) {
+      playAudio();
+      return <GameModal score={score} seconds={seconds} minutes={minutes} />;
+    }
+  }
+
   return (
     <AppContainer>
-      {cards.every(
-        (card) =>
-          card.matched === true &&
-          setTimeout(() => {
-            window.location.reload();
-          }, 3000)
-      )}
+      {modal()}
       <CardSection>
         {startGame && (
           <CardsWrapper>
@@ -107,7 +116,10 @@ function App() {
         >
           Start Game
         </NewGameBtn>
-        {startGame && <Timer />} {/** Timer is Component */}
+        {/* Timer is Component*/}
+        {startGame && (
+          <Timer cards={cards} seconds={seconds} setSeconds={setSeconds} minutes={minutes} setMinutes={setMinutes} />
+        )}
         {startGame && (
           <InfoElement>
             <H1>Score = </H1> {score}
